@@ -172,16 +172,12 @@ class WeightForecastTests(unittest.TestCase):
         self.assertLess(result["predicted_change_kg"], 0)
         self.assertEqual(result["actual_change_kg"], -4.0)
 
-    def test_skill_contains_flexible_v5_reply_contract(self):
+    def test_skill_contains_compact_v4_reply_contract(self):
         text = SKILL.read_text(encoding="utf-8")
-        self.assertIn("先用一至两句给出结论", text)
-        self.assertIn("本餐热量、蛋白质、碳水的估算区间和采用值", text)
-        self.assertIn("今日三项累计、当前目标、完成比例或差额", text)
+        self.assertIn("| 指标 | 估算区间 | 采用值 |", text)
+        self.assertIn("| 指标 | 今日累计 / 目标 | 进度 | 判断 |", text)
         self.assertIn("若今天此后不再进食", text)
-        self.assertIn("自行选择最清晰且最简洁的展示方式", text)
-        self.assertIn("不固定标题、表格、进度条或排版", text)
-        self.assertNotIn("进度条固定 10 格", text)
-        self.assertNotIn("██████████", text)
+        self.assertIn("██████████", text)
         self.assertNotIn("data-dynamic-ui-widget", text)
 
 
