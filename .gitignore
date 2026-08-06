@@ -1,0 +1,8 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+
+# Personal health data and generated reports must stay local.
+饮食记录.csv
+减脂档案.md
+报告/
