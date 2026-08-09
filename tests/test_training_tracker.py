@@ -223,7 +223,34 @@ class TrainingTrackerTests(unittest.TestCase):
         svg = first.read_text(encoding="utf-8")
         for muscle in ("胸", "背", "肩", "肱二头", "肱三头", "核心", "臀", "股四头", "腘绳肌", "小腿"):
             self.assertIn(f'id="{muscle}"', svg)
+            self.assertIn(f'data-muscle="{muscle}"', svg)
+        self.assertIn("正面 · 前侧", svg)
+        self.assertIn("背面 · 后侧", svg)
         self.assertIn("不表示恢复百分比", svg)
+
+    def test_render_defaults_to_dedicated_temporary_html(self):
+        self.record()
+        result = self.run_cli(
+            "render", "--training-csv", self.training_csv, "--start", "2026-08-09",
+            "--end", "2026-08-09",
+        )
+        repeated = self.run_cli(
+            "render", "--training-csv", self.training_csv, "--start", "2026-08-09",
+            "--end", "2026-08-09",
+        )
+
+        output = Path(result["output"])
+        rendered_html = output.read_text(encoding="utf-8")
+        self.assertEqual(result["format"], "html")
+        self.assertEqual(result["temporary"], True)
+        self.assertEqual(output.parent, Path(tempfile.gettempdir()) / "diet-fat-loss-tracker")
+        self.assertEqual(repeated["output"], result["output"])
+        self.assertEqual(len(list(output.parent.glob("training-muscle-map.*"))), 1)
+        self.assertNotIn(str(SKILL_DIR.parent), str(output))
+        self.assertIn("<!doctype html>", rendered_html)
+        self.assertIn("ANTERIOR · FACING YOU", rendered_html)
+        self.assertIn("POSTERIOR · BACK TO YOU", rendered_html)
+        self.assertIn("training.seer.cancer.gov", rendered_html)
 
     def test_plan_uses_rolling_queue_for_any_available_time(self):
         self.configure()

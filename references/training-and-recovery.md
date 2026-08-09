@@ -84,7 +84,11 @@
 
 ## 部位图
 
-`render` 生成自包含 SVG。深浅色仅表示选定周期内的训练刺激，不能标成肌肉增长、热量消耗或恢复百分比。同样输入必须生成同样内容；同一输出路径可覆盖，避免累积无用图片。
+`render` 默认生成自包含 HTML，内部使用原创矢量表面肌群图。正面必须写明“正面 · 前侧”，背面必须写明“背面 · 后侧”；肱二头、股四头等前侧肌群放在正面，肱三头、背、臀、腘绳肌等后侧肌群放在背面，肩、核心和小腿可按其前后表面同时显示。肌群名称须用引导线直接连接对应区域，不能只在图外给无位置关系的列表。
+
+省略 `--output` 时固定覆盖系统临时目录中的 `diet-fat-loss-tracker/training-muscle-map.html`，不在健康项目、个人档案目录或当前工作目录留下图片。只有用户明确要求永久保存或导出时才传 `.html` 或 `.svg` 路径。
+
+深浅色仅表示选定周期内的训练刺激，不能标成肌肉增长、热量消耗或恢复百分比。同样输入必须生成同样内容。解剖方向与主要表面肌群位置参考 [NIH/NCI SEER 解剖术语](https://training.seer.cancer.gov/anatomy/body/terminology.html)、[上肢肌群](https://training.seer.cancer.gov/anatomy/muscular/groups/upper.html)、[下肢肌群](https://training.seer.cancer.gov/anatomy/muscular/groups/lower.html)和 [OpenStax 肌肉系统概览](https://openstax.org/books/anatomy-and-physiology-2e/pages/11-2-naming-skeletal-muscles)；底图必须自行绘制，不复制第三方现成解剖图。
 
 ## 饮食联动
 

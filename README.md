@@ -1,8 +1,8 @@
 # 减脂饮食与训练记录 Skill
 
-一个面向普通成年人的中文减脂与训练组合 Skill。它保留原有餐食估算、每日摄入进度、体重趋势和 HTML 周/月报，同时新增力量/有氧落账、训练部位 SVG、恢复复查窗口、滚动训练计划和月度联合复核。
+一个面向普通成年人的中文减脂与训练组合 Skill。它保留原有餐食估算、每日摄入进度、体重趋势和 HTML 周/月报，同时新增力量/有氧落账、解剖化训练部位图、恢复复查窗口、滚动训练计划和月度联合复核。
 
-当前正式版本：`v2.0.0`。
+当前正式版本：`v2.0.1`。
 
 ## 主要能力
 
@@ -16,7 +16,7 @@
 - 初次建立训练目标、经验、器械、时长、频率范围和限制；月初与体重一起询问是否变化。
 - 每个动作写入独立训练账本，用唯一训练 ID 幂等同步一条饮食运动摘要。
 - 根据主要/次要部位、组数或时长、RIR/RPE 和主观感受输出宽恢复窗口。
-- 生成正背面 10 部位确定性 SVG，同样输入得到同样结果，不反复消耗图片生成 token。
+- 生成带正面/背面和直接肌群标注的确定性 HTML/矢量部位图，同样输入得到同样结果，不反复消耗图片生成 token。
 - 根据实际可用时间执行滚动 A/B 队列，不绑定固定星期或每周次数。
 
 ## 适用边界
@@ -33,6 +33,8 @@ diet-fat-loss-tracker/
 ├── LICENSE
 ├── README.md
 ├── SKILL.md
+├── assets/
+│   └── muscle-map-anatomical.svg
 ├── references/
 │   ├── profile-and-targets.md
 │   ├── training-and-recovery.md
@@ -126,9 +128,13 @@ python3 diet-fat-loss-tracker/scripts/training_tracker.py evaluate \
   --session-id 20260809-example \
   --plan '{"exercises":[{"exercise":"深蹲","sets":"3","reps":"6～10","target_rir":"2～4"}]}'
 
-# 生成训练刺激 SVG
+# 生成临时训练部位 HTML；默认覆盖系统临时目录，不污染当前文件夹
 python3 diet-fat-loss-tracker/scripts/training_tracker.py render \
-  --start 2026-08-04 --end 2026-08-10 --output 训练部位-本周.svg
+  --start 2026-08-04 --end 2026-08-10
+
+# 只有明确需要长期保存时才指定输出路径
+python3 diet-fat-loss-tracker/scripts/training_tracker.py render \
+  --start 2026-08-04 --end 2026-08-10 --output 训练部位-本周.html
 ```
 
 数据不在默认位置时，使用各命令的 `--help` 查看 `--training-csv`、`--diet-csv`、`--profile` 和 `--output`。预测及训练脚本输出一行 JSON；报告脚本生成固定文件名的离线 HTML。
@@ -148,7 +154,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s diet-fat-loss-track
 python3 /path/to/skill-creator/scripts/quick_validate.py diet-fat-loss-tracker
 ```
 
-当前 `v2.0.0` 测试覆盖原有全部饮食、预测和 HTML 报告合同，并新增训练配置、未知动作拒绝、双账本幂等与失败恢复、计划达标比较、常规/额外运动标记、恢复窗口、重复训练、反馈校准、无器械计划、伤病退出、滚动队列和 SVG 确定性。
+当前 `v2.0.1` 测试覆盖原有全部饮食、预测和 HTML 报告合同，并新增训练配置、未知动作拒绝、双账本幂等与失败恢复、计划达标比较、常规/额外运动标记、恢复窗口、重复训练、反馈校准、无器械计划、伤病退出、滚动队列、临时输出隔离和解剖部位图确定性。
 
 ## 许可证
 

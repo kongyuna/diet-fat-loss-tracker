@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="map" width="1120" height="780" viewBox="0 0 1120 780" role="img" aria-labelledby="map-title map-desc">
+  <title id="map-title">{{TITLE}}，{{PERIOD}}</title>
+  <desc id="map-desc">标准站姿的正面与背面训练部位图，标出胸、背、肩、肱二头、肱三头、核心、臀、股四头、腘绳肌和小腿。</desc>
+  <defs>
+    <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#273849" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .ui{font-family:"PingFang SC","Noto Sans CJK SC",sans-serif}.display{font-family:"Songti SC","Noto Serif CJK SC",serif}.outline{fill:#f1f4f5;stroke:#9baab5;stroke-width:2;stroke-linejoin:round}.joint{fill:#f7f8f8;stroke:#9baab5;stroke-width:1.7}.muscle{stroke:#fff;stroke-width:2;stroke-linejoin:round}.fiber{fill:none;stroke:#fff;stroke-width:1.2;stroke-linecap:round;opacity:.62}.guide{fill:none;stroke-width:1.5;stroke-linecap:round}.callout{font:600 14px "PingFang SC","Noto Sans CJK SC",sans-serif;fill:#21313f}.score{font:12px "PingFang SC","Noto Sans CJK SC",sans-serif;fill:#61717e}.orientation{font:700 18px "PingFang SC","Noto Sans CJK SC",sans-serif;fill:#21313f}.orientation-en{font:10px "Avenir Next",sans-serif;letter-spacing:1.8px;fill:#7b8a95}.midline{fill:none;stroke:#c7d0d6;stroke-width:1;stroke-dasharray:3 5}.landmark{fill:none;stroke:#aebbc4;stroke-width:1.2;stroke-linecap:round}
+    </style>
+  </defs>
+
+  <rect width="1120" height="780" fill="#fbfcfc"/>
+  <g class="ui">
+    <text x="52" y="55" class="display" font-size="30" font-weight="700" fill="#17212b">{{TITLE}}</text>
+    <text x="52" y="83" font-size="14" fill="#687887">{{PERIOD}}</text>
+    <g transform="translate(766 39)">
+      <rect width="302" height="47" rx="23.5" fill="#edf4f8"/>
+      <circle cx="22" cy="23.5" r="6" fill="#075fa8"/>
+      <text x="39" y="20" font-size="12" font-weight="600" fill="#345064">颜色表示训练刺激</text>
+      <text x="39" y="36" font-size="11" fill="#70818e">不是肌肉增长或恢复百分比</text>
+    </g>
+  </g>
+
+  <g filter="url(#soft-shadow)">
+    <rect x="50" y="112" width="500" height="548" rx="22" fill="#fff" stroke="#e1e7ea"/>
+    <rect x="570" y="112" width="500" height="548" rx="22" fill="#fff" stroke="#e1e7ea"/>
+  </g>
+
+  <g class="ui" text-anchor="middle">
+    <g transform="translate(300 143)">
+      <rect x="-73" y="-16" width="146" height="48" rx="24" fill="#f1f5f7"/>
+      <text y="4" class="orientation">正面 · 前侧</text>
+      <text y="21" class="orientation-en">ANTERIOR · FACING YOU</text>
+    </g>
+    <g transform="translate(820 143)">
+      <rect x="-73" y="-16" width="146" height="48" rx="24" fill="#f1f5f7"/>
+      <text y="4" class="orientation">背面 · 后侧</text>
+      <text y="21" class="orientation-en">POSTERIOR · BACK TO YOU</text>
+    </g>
+  </g>
+
+  <!-- 标准站姿底图：直立、双臂自然下垂并略离躯干。 -->
+  <g id="front-body" aria-label="正面人体">
+    <ellipse class="outline" cx="300" cy="211" rx="28" ry="35"/>
+    <path class="landmark" d="M292 211 Q300 218 308 211M294 226 Q300 229 306 226"/>
+    <circle cx="289" cy="207" r="1.7" fill="#7f8f9a"/><circle cx="311" cy="207" r="1.7" fill="#7f8f9a"/>
+    <path class="outline" d="M284 239 L282 259 Q300 267 318 259 L316 239 Z"/>
+    <path class="outline" d="M282 255 C261 258 249 273 248 298 L254 363 Q259 385 274 403 L326 403 Q341 385 346 363 L352 298 C351 273 339 258 318 255 Q300 268 282 255 Z"/>
+    <path class="outline" d="M255 276 C242 278 235 290 231 308 L216 373 Q212 390 220 401 Q228 407 235 397 L257 325 Q264 295 255 276 Z"/>
+    <path class="outline" d="M345 276 C358 278 365 290 369 308 L384 373 Q388 390 380 401 Q372 407 365 397 L343 325 Q336 295 345 276 Z"/>
+    <path class="outline" d="M219 397 Q207 405 207 423 L211 444 Q214 453 221 447 L225 432 L228 449 Q232 454 235 446 L238 427 Q239 409 233 398 Z"/>
+    <path class="outline" d="M381 397 Q393 405 393 423 L389 444 Q386 453 379 447 L375 432 L372 449 Q368 454 365 446 L362 427 Q361 409 367 398 Z"/>
+    <path class="outline" d="M274 398 Q265 420 267 457 L273 535 Q276 551 291 551 Q302 545 301 527 L303 433 L297 405 Z"/>
+    <path class="outline" d="M326 398 Q335 420 333 457 L327 535 Q324 551 309 551 Q298 545 299 527 L297 433 L303 405 Z"/>
+    <path class="outline" d="M274 536 Q268 560 271 610 L275 639 Q278 651 289 650 Q299 647 298 632 L301 552 Q289 544 274 536 Z"/>
+    <path class="outline" d="M326 536 Q332 560 329 610 L325 639 Q322 651 311 650 Q301 647 302 632 L299 552 Q311 544 326 536 Z"/>
+    <path class="outline" d="M275 638 Q264 646 260 655 Q260 661 270 662 L295 660 L292 647 Z"/>
+    <path class="outline" d="M325 638 Q336 646 340 655 Q340 661 330 662 L305 660 L308 647 Z"/>
+    <path class="midline" d="M300 271 L300 397M300 410 L300 528"/>
+    <path class="landmark" d="M277 397 Q300 409 323 397M274 535 Q286 543 299 537M326 535 Q314 543 301 537"/>
+  </g>
+
+  <g id="back-body" aria-label="背面人体">
+    <ellipse class="outline" cx="820" cy="211" rx="28" ry="35"/>
+    <path class="landmark" d="M801 202 Q820 192 839 202M806 238 Q820 244 834 238"/>
+    <path class="outline" d="M804 239 L802 259 Q820 267 838 259 L836 239 Z"/>
+    <path class="outline" d="M802 255 C781 258 769 273 768 298 L774 363 Q779 385 794 403 L846 403 Q861 385 866 363 L872 298 C871 273 859 258 838 255 Q820 268 802 255 Z"/>
+    <path class="outline" d="M775 276 C762 278 755 290 751 308 L736 373 Q732 390 740 401 Q748 407 755 397 L777 325 Q784 295 775 276 Z"/>
+    <path class="outline" d="M865 276 C878 278 885 290 889 308 L904 373 Q908 390 900 401 Q892 407 885 397 L863 325 Q856 295 865 276 Z"/>
+    <path class="outline" d="M739 397 Q727 405 727 423 L731 444 Q734 453 741 447 L745 432 L748 449 Q752 454 755 446 L758 427 Q759 409 753 398 Z"/>
+    <path class="outline" d="M901 397 Q913 405 913 423 L909 444 Q906 453 899 447 L895 432 L892 449 Q888 454 885 446 L882 427 Q881 409 887 398 Z"/>
+    <path class="outline" d="M794 398 Q785 420 787 457 L793 535 Q796 551 811 551 Q822 545 821 527 L823 433 L817 405 Z"/>
+    <path class="outline" d="M846 398 Q855 420 853 457 L847 535 Q844 551 829 551 Q818 545 819 527 L817 433 L823 405 Z"/>
+    <path class="outline" d="M794 536 Q788 560 791 610 L795 639 Q798 651 809 650 Q819 647 818 632 L821 552 Q809 544 794 536 Z"/>
+    <path class="outline" d="M846 536 Q852 560 849 610 L845 639 Q842 651 831 650 Q821 647 822 632 L819 552 Q831 544 846 536 Z"/>
+    <path class="outline" d="M795 638 Q784 646 780 655 Q780 661 790 662 L815 660 L812 647 Z"/>
+    <path class="outline" d="M845 638 Q856 646 860 655 Q860 661 850 662 L825 660 L828 647 Z"/>
+    <path class="midline" d="M820 267 L820 395M820 410 L820 528"/>
+    <path class="landmark" d="M797 397 Q820 409 843 397M794 535 Q806 543 819 537M846 535 Q834 543 821 537"/>
+  </g>
+
+  <!-- 训练部位覆盖层。形状为原创的表面解剖示意，不表示深层组织。 -->
+  <g id="胸" data-muscle="胸" class="muscle" fill="{{COLOR_CHEST}}">
+    <path d="M271 278 Q284 269 298 277 L298 320 Q281 324 268 309 Z"/>
+    <path d="M329 278 Q316 269 302 277 L302 320 Q319 324 332 309 Z"/>
+    <path class="fiber" d="M275 286 L296 295M272 298 L296 304M325 286 L304 295M328 298 L304 304"/>
+  </g>
+  <g id="背" data-muscle="背" class="muscle" fill="{{COLOR_BACK}}">
+    <path d="M805 267 Q820 280 835 267 L848 286 L833 323 L820 338 L807 323 L792 286 Z"/>
+    <path d="M790 291 Q780 305 783 338 L796 377 L814 357 L814 326 Z"/>
+    <path d="M850 291 Q860 305 857 338 L844 377 L826 357 L826 326 Z"/>
+    <path class="fiber" d="M820 282 L800 302M820 282 L840 302M810 326 L793 350M830 326 L847 350"/>
+  </g>
+  <g id="肩" data-muscle="肩" class="muscle" fill="{{COLOR_SHOULDER}}">
+    <path d="M270 269 Q251 268 247 289 Q247 307 258 316 L269 299 Z"/>
+    <path d="M330 269 Q349 268 353 289 Q353 307 342 316 L331 299 Z"/>
+    <path d="M790 269 Q771 268 767 289 Q767 307 778 316 L789 299 Z"/>
+    <path d="M850 269 Q869 268 873 289 Q873 307 862 316 L851 299 Z"/>
+  </g>
+  <g id="肱二头" data-muscle="肱二头" class="muscle" fill="{{COLOR_BICEPS}}">
+    <path d="M245 305 Q233 323 232 349 Q234 363 243 355 L253 318 Z"/>
+    <path d="M355 305 Q367 323 368 349 Q366 363 357 355 L347 318 Z"/>
+    <path class="fiber" d="M242 317 Q239 338 240 350M358 317 Q361 338 360 350"/>
+  </g>
+  <g id="肱三头" data-muscle="肱三头" class="muscle" fill="{{COLOR_TRICEPS}}">
+    <path d="M765 302 Q752 320 752 350 Q754 364 763 355 L773 317 Z"/>
+    <path d="M875 302 Q888 320 888 350 Q886 364 877 355 L867 317 Z"/>
+    <path class="fiber" d="M762 315 Q759 338 760 351M878 315 Q881 338 880 351"/>
+  </g>
+  <g id="核心" data-muscle="核心" class="muscle" fill="{{COLOR_CORE}}">
+    <path d="M279 326 L297 325 L297 345 L277 348 Z"/><path d="M303 325 L321 326 L323 348 L303 345 Z"/>
+    <path d="M277 351 L297 348 L297 369 L275 372 Z"/><path d="M303 348 L323 351 L325 372 L303 369 Z"/>
+    <path d="M276 375 L297 372 L297 394 L275 394 Z"/><path d="M303 372 L324 375 L325 394 L303 394 Z"/>
+    <path d="M267 322 Q275 339 273 390 L260 370 L257 337 Z"/><path d="M333 322 Q325 339 327 390 L340 370 L343 337 Z"/>
+    <path d="M813 341 Q807 359 808 389 L817 398 L817 341 Z"/><path d="M827 341 Q833 359 832 389 L823 398 L823 341 Z"/>
+  </g>
+  <g id="臀" data-muscle="臀" class="muscle" fill="{{COLOR_GLUTES}}">
+    <path d="M793 394 Q801 383 818 395 L818 430 Q799 434 790 417 Z"/>
+    <path d="M847 394 Q839 383 822 395 L822 430 Q841 434 850 417 Z"/>
+    <path class="fiber" d="M797 402 Q807 414 815 423M843 402 Q833 414 825 423"/>
+  </g>
+  <g id="股四头" data-muscle="股四头" class="muscle" fill="{{COLOR_QUADS}}">
+    <path d="M273 411 Q284 402 296 414 L296 483 Q287 520 276 526 L270 480 Z"/>
+    <path d="M327 411 Q316 402 304 414 L304 483 Q313 520 324 526 L330 480 Z"/>
+    <path d="M298 414 L302 414 L303 493 L300 517 L297 493 Z"/>
+    <path class="fiber" d="M280 424 L287 503M320 424 L313 503"/>
+  </g>
+  <g id="腘绳肌" data-muscle="腘绳肌" class="muscle" fill="{{COLOR_HAMSTRINGS}}">
+    <path d="M790 431 Q802 424 817 434 L817 492 Q813 521 798 528 L791 485 Z"/>
+    <path d="M850 431 Q838 424 823 434 L823 492 Q827 521 842 528 L849 485 Z"/>
+    <path class="fiber" d="M799 443 L807 510M841 443 L833 510"/>
+  </g>
+  <g id="小腿" data-muscle="小腿" class="muscle" fill="{{COLOR_CALVES}}">
+    <path d="M277 548 Q290 543 296 555 L293 610 Q287 632 279 636 L273 607 Z"/>
+    <path d="M323 548 Q310 543 304 555 L307 610 Q313 632 321 636 L327 607 Z"/>
+    <path d="M795 548 Q807 541 816 553 L814 597 Q808 620 797 626 L791 593 Z"/>
+    <path d="M845 548 Q833 541 824 553 L826 597 Q832 620 843 626 L849 593 Z"/>
+    <path class="fiber" d="M285 558 L284 616M315 558 L316 616M803 556 Q812 578 805 610M837 556 Q828 578 835 610"/>
+  </g>
+
+  <!-- 直接标注：名称、刺激分档与分数。 -->
+  <g class="ui">
+    <g aria-label="肩 {{LEVEL_SHOULDER}} {{SCORE_SHOULDER}}">
+      <path class="guide" stroke="{{COLOR_SHOULDER}}" d="M249 287 L194 252 L108 252"/><circle cx="249" cy="287" r="3" fill="{{COLOR_SHOULDER}}"/>
+      <rect x="82" y="233" width="145" height="38" rx="11" fill="{{COLOR_SHOULDER}}" fill-opacity=".13"/>
+      <text x="95" y="249" class="callout">肩（三角肌）</text><text x="95" y="264" class="score">{{LEVEL_SHOULDER}} · {{SCORE_SHOULDER}}</text>
+    </g>
+    <g aria-label="胸 {{LEVEL_CHEST}} {{SCORE_CHEST}}">
+      <path class="guide" stroke="{{COLOR_CHEST}}" d="M273 300 L198 300 L108 300"/><circle cx="273" cy="300" r="3" fill="{{COLOR_CHEST}}"/>
+      <rect x="82" y="281" width="145" height="38" rx="11" fill="{{COLOR_CHEST}}" fill-opacity=".13"/>
+      <text x="95" y="297" class="callout">胸（胸大肌）</text><text x="95" y="312" class="score">{{LEVEL_CHEST}} · {{SCORE_CHEST}}</text>
+    </g>
+    <g aria-label="肱二头 {{LEVEL_BICEPS}} {{SCORE_BICEPS}}">
+      <path class="guide" stroke="{{COLOR_BICEPS}}" d="M240 333 L192 348 L108 348"/><circle cx="240" cy="333" r="3" fill="{{COLOR_BICEPS}}"/>
+      <rect x="82" y="329" width="145" height="38" rx="11" fill="{{COLOR_BICEPS}}" fill-opacity=".13"/>
+      <text x="95" y="345" class="callout">肱二头肌</text><text x="95" y="360" class="score">{{LEVEL_BICEPS}} · {{SCORE_BICEPS}}</text>
+    </g>
+    <g aria-label="核心 {{LEVEL_CORE}} {{SCORE_CORE}}">
+      <path class="guide" stroke="{{COLOR_CORE}}" d="M277 367 L198 396 L108 396"/><circle cx="277" cy="367" r="3" fill="{{COLOR_CORE}}"/>
+      <rect x="82" y="377" width="145" height="38" rx="11" fill="{{COLOR_CORE}}" fill-opacity=".13"/>
+      <text x="95" y="393" class="callout">核心（腹肌）</text><text x="95" y="408" class="score">{{LEVEL_CORE}} · {{SCORE_CORE}}</text>
+    </g>
+    <g aria-label="股四头 {{LEVEL_QUADS}} {{SCORE_QUADS}}">
+      <path class="guide" stroke="{{COLOR_QUADS}}" d="M279 475 L198 483 L108 483"/><circle cx="279" cy="475" r="3" fill="{{COLOR_QUADS}}"/>
+      <rect x="82" y="464" width="145" height="38" rx="11" fill="{{COLOR_QUADS}}" fill-opacity=".13"/>
+      <text x="95" y="480" class="callout">股四头肌群</text><text x="95" y="495" class="score">{{LEVEL_QUADS}} · {{SCORE_QUADS}}</text>
+    </g>
+    <g aria-label="小腿 {{LEVEL_CALVES}} {{SCORE_CALVES}}">
+      <path class="guide" stroke="{{COLOR_CALVES}}" d="M281 589 L198 585 L108 585"/><circle cx="281" cy="589" r="3" fill="{{COLOR_CALVES}}"/>
+      <rect x="82" y="566" width="145" height="38" rx="11" fill="{{COLOR_CALVES}}" fill-opacity=".13"/>
+      <text x="95" y="582" class="callout">小腿（胫前）</text><text x="95" y="597" class="score">{{LEVEL_CALVES}} · {{SCORE_CALVES}}</text>
+    </g>
+
+    <g aria-label="背 {{LEVEL_BACK}} {{SCORE_BACK}}">
+      <path class="guide" stroke="{{COLOR_BACK}}" d="M843 307 L924 252 L1012 252"/><circle cx="843" cy="307" r="3" fill="{{COLOR_BACK}}"/>
+      <rect x="919" y="233" width="145" height="38" rx="11" fill="{{COLOR_BACK}}" fill-opacity=".13"/>
+      <text x="932" y="249" class="callout">背（斜方/背阔）</text><text x="932" y="264" class="score">{{LEVEL_BACK}} · {{SCORE_BACK}}</text>
+    </g>
+    <g aria-label="肱三头 {{LEVEL_TRICEPS}} {{SCORE_TRICEPS}}">
+      <path class="guide" stroke="{{COLOR_TRICEPS}}" d="M880 332 L930 324 L1012 324"/><circle cx="880" cy="332" r="3" fill="{{COLOR_TRICEPS}}"/>
+      <rect x="919" y="305" width="145" height="38" rx="11" fill="{{COLOR_TRICEPS}}" fill-opacity=".13"/>
+      <text x="932" y="321" class="callout">肱三头肌</text><text x="932" y="336" class="score">{{LEVEL_TRICEPS}} · {{SCORE_TRICEPS}}</text>
+    </g>
+    <g aria-label="臀 {{LEVEL_GLUTES}} {{SCORE_GLUTES}}">
+      <path class="guide" stroke="{{COLOR_GLUTES}}" d="M845 408 L930 409 L1012 409"/><circle cx="845" cy="408" r="3" fill="{{COLOR_GLUTES}}"/>
+      <rect x="919" y="390" width="145" height="38" rx="11" fill="{{COLOR_GLUTES}}" fill-opacity=".13"/>
+      <text x="932" y="406" class="callout">臀（臀大肌）</text><text x="932" y="421" class="score">{{LEVEL_GLUTES}} · {{SCORE_GLUTES}}</text>
+    </g>
+    <g aria-label="腘绳肌 {{LEVEL_HAMSTRINGS}} {{SCORE_HAMSTRINGS}}">
+      <path class="guide" stroke="{{COLOR_HAMSTRINGS}}" d="M840 478 L930 489 L1012 489"/><circle cx="840" cy="478" r="3" fill="{{COLOR_HAMSTRINGS}}"/>
+      <rect x="919" y="470" width="145" height="38" rx="11" fill="{{COLOR_HAMSTRINGS}}" fill-opacity=".13"/>
+      <text x="932" y="486" class="callout">腘绳肌群</text><text x="932" y="501" class="score">{{LEVEL_HAMSTRINGS}} · {{SCORE_HAMSTRINGS}}</text>
+    </g>
+    <g aria-label="小腿 {{LEVEL_CALVES}} {{SCORE_CALVES}}">
+      <path class="guide" stroke="{{COLOR_CALVES}}" d="M839 585 L930 585 L1012 585"/><circle cx="839" cy="585" r="3" fill="{{COLOR_CALVES}}"/>
+      <rect x="919" y="566" width="145" height="38" rx="11" fill="{{COLOR_CALVES}}" fill-opacity=".13"/>
+      <text x="932" y="582" class="callout">小腿（腓肠肌）</text><text x="932" y="597" class="score">{{LEVEL_CALVES}} · {{SCORE_CALVES}}</text>
+    </g>
+  </g>
+
+  <g class="ui" transform="translate(52 700)">
+    <text x="0" y="5" font-size="12" font-weight="700" fill="#3e505d">刺激分档</text>
+    <rect x="82" y="-9" width="28" height="14" rx="4" fill="#e8edf2"/><text x="118" y="3" font-size="12" fill="#5e6f7b">无</text>
+    <rect x="157" y="-9" width="28" height="14" rx="4" fill="#a8d4f2"/><text x="193" y="3" font-size="12" fill="#5e6f7b">轻</text>
+    <rect x="232" y="-9" width="28" height="14" rx="4" fill="#3f98d7"/><text x="268" y="3" font-size="12" fill="#5e6f7b">中</text>
+    <rect x="307" y="-9" width="28" height="14" rx="4" fill="#075fa8"/><text x="343" y="3" font-size="12" fill="#5e6f7b">高</text>
+    <text x="1016" y="3" text-anchor="end" font-size="12" fill="#758590">正面看前侧肌群 · 背面看后侧肌群</text>
+  </g>
+  <text x="52" y="744" class="ui" font-size="11" fill="#82909a">表面肌群位置示意 · 同一输入确定性生成 · 不表示恢复百分比或医学测量</text>
+</svg>

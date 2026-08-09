@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic strength/cardio logging, recovery guidance, planning, and SVG maps."""
+"""Deterministic training logging, recovery guidance, planning, and anatomy maps."""
 
 import argparse
 import csv
@@ -7,6 +7,7 @@ import hashlib
 import html
 import json
 import re
+import tempfile
 from collections import defaultdict
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
@@ -14,6 +15,12 @@ from pathlib import Path
 
 MODEL_VERSION = "training-recovery-v1"
 MUSCLES = ("胸", "背", "肩", "肱二头", "肱三头", "核心", "臀", "股四头", "腘绳肌", "小腿")
+MUSCLE_TEMPLATE = Path(__file__).resolve().parents[1] / "assets" / "muscle-map-anatomical.svg"
+MUSCLE_KEYS = {
+    "胸": "CHEST", "背": "BACK", "肩": "SHOULDER", "肱二头": "BICEPS",
+    "肱三头": "TRICEPS", "核心": "CORE", "臀": "GLUTES", "股四头": "QUADS",
+    "腘绳肌": "HAMSTRINGS", "小腿": "CALVES",
+}
 TRAINING_HEADERS = [
     "日期", "开始时间", "训练ID", "训练类型", "整节时长分钟", "动作", "组数", "次数", "重量kg",
     "时长分钟", "RIR", "RPE", "训练感受", "主要部位", "次要部位", "恢复反馈",
@@ -574,55 +581,102 @@ def period_scores(rows, start_day, end_day):
 
 def color_for_score(score):
     if score <= 0:
-        return "#eef2f7"
+        return "#e8edf2"
     if score < 3:
-        return "#bfdbfe"
+        return "#a8d4f2"
     if score < 7:
-        return "#60a5fa"
-    return "#1d4ed8"
+        return "#3f98d7"
+    return "#075fa8"
 
 
-def render_svg(rows, start_day, end_day, output):
-    scores = period_scores(rows, start_day, end_day)
-    colors = {muscle: color_for_score(scores.get(muscle, 0)) for muscle in MUSCLES}
-    shapes = {
-        "胸": '<path d="M120 118 Q150 95 180 118 L174 150 Q150 160 126 150 Z"/>',
-        "背": '<path d="M420 112 Q450 94 480 112 L470 175 Q450 188 430 175 Z"/>',
-        "肩": '<circle cx="110" cy="125" r="16"/><circle cx="190" cy="125" r="16"/><circle cx="410" cy="125" r="16"/><circle cx="490" cy="125" r="16"/>',
-        "肱二头": '<rect x="92" y="143" width="18" height="50" rx="9"/><rect x="190" y="143" width="18" height="50" rx="9"/>',
-        "肱三头": '<rect x="392" y="143" width="18" height="50" rx="9"/><rect x="490" y="143" width="18" height="50" rx="9"/>',
-        "核心": '<rect x="132" y="154" width="36" height="70" rx="15"/><rect x="432" y="178" width="36" height="46" rx="15"/>',
-        "臀": '<ellipse cx="437" cy="237" rx="19" ry="18"/><ellipse cx="463" cy="237" rx="19" ry="18"/>',
-        "股四头": '<rect x="126" y="225" width="24" height="86" rx="12"/><rect x="150" y="225" width="24" height="86" rx="12"/>',
-        "腘绳肌": '<rect x="426" y="255" width="24" height="66" rx="12"/><rect x="450" y="255" width="24" height="66" rx="12"/>',
-        "小腿": '<rect x="126" y="318" width="22" height="73" rx="11"/><rect x="152" y="318" width="22" height="73" rx="11"/><rect x="426" y="328" width="22" height="63" rx="11"/><rect x="452" y="328" width="22" height="63" rx="11"/>',
+def level_for_score(score):
+    if score <= 0:
+        return "无"
+    if score < 3:
+        return "轻"
+    if score < 7:
+        return "中"
+    return "高"
+
+
+def anatomy_svg(scores, start_day, end_day):
+    if not MUSCLE_TEMPLATE.exists():
+        raise ValueError(f"人体图模板不存在：{MUSCLE_TEMPLATE}")
+    svg = MUSCLE_TEMPLATE.read_text(encoding="utf-8")
+    replacements = {
+        "TITLE": "训练部位概览",
+        "PERIOD": f"{start_day.isoformat()} 至 {end_day.isoformat()}",
     }
-    body = []
-    for muscle in MUSCLES:
-        body.append(f'<g id="{html.escape(muscle)}" fill="{colors[muscle]}" stroke="#ffffff" stroke-width="2">{shapes[muscle]}</g>')
-    labels = "".join(
-        f'<text x="20" y="{452 + index * 20}" font-size="14" fill="#334155">{html.escape(muscle)} {scores.get(muscle, 0):.1f}</text>'
-        for index, muscle in enumerate(MUSCLES)
-    )
-    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="620" height="670" viewBox="0 0 620 670">
-<rect width="620" height="670" rx="24" fill="#ffffff"/>
-<text x="30" y="38" font-size="24" font-family="sans-serif" fill="#0f172a">训练部位 {start_day.isoformat()} 至 {end_day.isoformat()}</text>
-<text x="125" y="72" font-size="16" font-family="sans-serif" fill="#64748b">正面</text><text x="425" y="72" font-size="16" font-family="sans-serif" fill="#64748b">背面</text>
-<circle cx="150" cy="91" r="23" fill="#eef2f7" stroke="#cbd5e1"/><circle cx="450" cy="91" r="23" fill="#eef2f7" stroke="#cbd5e1"/>
-{''.join(body)}
-<text x="350" y="452" font-size="13" fill="#64748b">颜色表示训练刺激，不表示恢复百分比</text>
-<g font-family="sans-serif">{labels}</g>
-<g transform="translate(350 486)" font-family="sans-serif" font-size="13" fill="#475569">
-<rect x="0" y="0" width="22" height="14" fill="#eef2f7"/><text x="28" y="12">无</text>
-<rect x="70" y="0" width="22" height="14" fill="#bfdbfe"/><text x="98" y="12">轻</text>
-<rect x="140" y="0" width="22" height="14" fill="#60a5fa"/><text x="168" y="12">中</text>
-<rect x="210" y="0" width="22" height="14" fill="#1d4ed8"/><text x="238" y="12">高</text>
-</g></svg>'''
+    for muscle, key in MUSCLE_KEYS.items():
+        score = scores.get(muscle, 0)
+        replacements[f"COLOR_{key}"] = color_for_score(score)
+        replacements[f"SCORE_{key}"] = f"{score:.1f}"
+        replacements[f"LEVEL_{key}"] = level_for_score(score)
+    for key, value in replacements.items():
+        svg = svg.replace("{{" + key + "}}", html.escape(value))
+    unresolved = re.findall(r"{{[A-Z_]+}}", svg)
+    if unresolved:
+        raise ValueError(f"人体图模板存在未替换字段：{','.join(sorted(set(unresolved)))}")
+    return svg
+
+
+def anatomy_html(svg):
+    return f'''<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>训练部位概览</title>
+<style>
+:root {{ color-scheme: light; --ink:#17212b; --muted:#687887; --paper:#f4f1ea; }}
+* {{ box-sizing:border-box; }}
+html,body {{ margin:0; min-height:100%; background:var(--paper); }}
+body {{ padding:24px; font-family:"Songti SC","Noto Serif CJK SC","STSong",serif; color:var(--ink); }}
+main {{ width:min(1180px,100%); margin:0 auto; }}
+.report {{ overflow:hidden; background:#fff; border:1px solid #dce3e8; border-radius:24px; box-shadow:0 20px 60px rgba(35,51,65,.12); }}
+.map {{ display:block; width:100%; height:auto; }}
+.note {{ display:flex; justify-content:space-between; gap:24px; padding:15px 28px 20px; color:var(--muted); font:13px/1.6 "PingFang SC","Noto Sans CJK SC",sans-serif; border-top:1px solid #edf1f3; }}
+.note a {{ color:#075fa8; text-decoration:none; border-bottom:1px solid #a8d4f2; }}
+@media (max-width:720px) {{ body {{ padding:8px; }} .report {{ border-radius:14px; }} .note {{ display:block; padding:12px 16px 16px; }} }}
+@media print {{ body {{ padding:0; background:#fff; }} .report {{ border:0; box-shadow:none; }} }}
+</style>
+</head>
+<body>
+<main>
+  <article class="report" aria-label="训练部位概览">
+    {svg}
+    <footer class="note">
+      <span>解剖方向与主要表面肌群位置参考 NIH/NCI SEER 与 OpenStax；本图为训练记录示意，不用于医学诊断。</span>
+      <span><a href="https://training.seer.cancer.gov/anatomy/body/terminology.html">解剖方向</a> · <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/11-2-naming-skeletal-muscles">肌群概览</a></span>
+    </footer>
+  </article>
+</main>
+</body>
+</html>'''
+
+
+def render_anatomy(rows, start_day, end_day, output=None):
+    scores = period_scores(rows, start_day, end_day)
+    svg = anatomy_svg(scores, start_day, end_day)
+    is_temporary = output is None
+    if output is None:
+        output = Path(tempfile.gettempdir()) / "diet-fat-loss-tracker" / "training-muscle-map.html"
+    suffix = output.suffix.lower()
+    if suffix not in (".html", ".svg"):
+        raise ValueError("部位图输出仅支持 .html 或 .svg")
+    content = anatomy_html(svg) if suffix == ".html" else svg
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(svg, encoding="utf-8")
-    if output.read_text(encoding="utf-8") != svg:
-        raise ValueError("SVG 写入后回读不一致")
-    return {"status": "ok", "output": str(output), "scores": {muscle: round(scores.get(muscle, 0), 2) for muscle in MUSCLES}}
+    output.write_text(content, encoding="utf-8")
+    if output.read_text(encoding="utf-8") != content:
+        raise ValueError("部位图写入后回读不一致")
+    return {
+        "status": "ok",
+        "output": str(output),
+        "format": suffix.removeprefix("."),
+        "temporary": is_temporary,
+        "storage": "系统临时目录；默认覆盖同名文件，不写入健康项目文件夹" if is_temporary else "用户指定路径",
+        "scores": {muscle: round(scores.get(muscle, 0), 2) for muscle in MUSCLES},
+    }
 
 
 def training_config(profile_path):
@@ -818,7 +872,7 @@ def default_paths():
 
 def parse_args():
     training_default, diet_default, profile_default = default_paths()
-    parser = argparse.ArgumentParser(description="记录训练、同步饮食摘要、判断达标与恢复、生成滚动计划和 SVG 部位图。")
+    parser = argparse.ArgumentParser(description="记录训练、同步饮食摘要、判断达标与恢复、生成滚动计划和解剖部位图。")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     configure = subparsers.add_parser("configure", help="创建或更新减脂档案中的训练配置。")
@@ -855,11 +909,11 @@ def parse_args():
     status.add_argument("--training-csv", type=Path, default=training_default)
     status.add_argument("--as-of", required=True, help="YYYY-MM-DDTHH:MM")
 
-    render = subparsers.add_parser("render", help="生成确定性 SVG 训练部位图。")
+    render = subparsers.add_parser("render", help="生成确定性解剖训练部位图；默认输出临时 HTML。")
     render.add_argument("--training-csv", type=Path, default=training_default)
     render.add_argument("--start", required=True, help="YYYY-MM-DD")
     render.add_argument("--end", required=True, help="YYYY-MM-DD")
-    render.add_argument("--output", type=Path, required=True)
+    render.add_argument("--output", type=Path, help="可选永久路径，仅支持 .html 或 .svg；省略则覆盖系统临时 HTML。")
 
     plan = subparsers.add_parser("plan", help="根据可用时间和恢复状态选择滚动队列下一节。")
     plan.add_argument("--training-csv", type=Path, default=training_default)
@@ -901,7 +955,7 @@ def main():
             start_day, end_day = date.fromisoformat(args.start), date.fromisoformat(args.end)
             if end_day < start_day:
                 raise ValueError("结束日期不能早于开始日期")
-            result = render_svg(rows, start_day, end_day, args.output)
+            result = render_anatomy(rows, start_day, end_day, args.output)
         elif args.command == "plan":
             rows = read_csv(args.training_csv, TRAINING_HEADERS, allow_missing=True)
             result = planned_session(rows, args.profile, args.available_minutes, parse_datetime(args.as_of))
