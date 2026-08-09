@@ -5,4 +5,6 @@ __pycache__/
 # Personal health data and generated reports must stay local.
 饮食记录.csv
 减脂档案.md
+训练记录.csv
+训练部位*.svg
 报告/

@@ -1,0 +1,7 @@
+interface:
+  display_name: "减脂饮食与训练助手"
+  short_description: "统一记录减脂饮食、力量有氧、训练部位、恢复状态与滚动计划"
+  default_prompt: "Use $diet-fat-loss-tracker to record my meals and workouts, then suggest the next session from my current goals and recovery state."
+
+policy:
+  allow_implicit_invocation: true
