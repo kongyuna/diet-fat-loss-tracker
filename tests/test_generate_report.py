@@ -12,7 +12,7 @@ SCRIPT = SKILL_DIR / "scripts" / "generate_report.py"
 HEADERS = [
     "日期", "餐次", "食物", "估算份量", "热量下限", "热量上限", "采用热量",
     "蛋白质下限", "蛋白质上限", "采用蛋白质", "碳水下限", "碳水上限",
-    "采用碳水", "可信度", "运动项目", "运动时长分钟", "运动强度",
+    "采用碳水", "脂肪下限", "脂肪上限", "采用脂肪", "可信度", "运动项目", "运动时长分钟", "运动强度",
     "是否额外运动", "备注",
 ]
 
@@ -131,6 +131,12 @@ class GenerateReportTests(unittest.TestCase):
 
         self.assertEqual(first_path, second_path)
         self.assertEqual([path.name for path in self.output_dir.glob("*.html")], ["2026-W32.html"])
+
+    def test_fat_columns_do_not_expand_report_targets_or_charts(self):
+        _, html = self.run_report("week", "2026-08-09")
+
+        self.assertNotIn("每日脂肪", html)
+        self.assertNotIn("脂肪目标", html)
 
 
 if __name__ == "__main__":

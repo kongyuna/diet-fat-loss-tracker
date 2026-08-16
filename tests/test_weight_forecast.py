@@ -15,7 +15,7 @@ SKILL = SKILL_DIR / "SKILL.md"
 HEADERS = [
     "日期", "餐次", "食物", "估算份量", "热量下限", "热量上限", "采用热量",
     "蛋白质下限", "蛋白质上限", "采用蛋白质", "碳水下限", "碳水上限",
-    "采用碳水", "可信度", "运动项目", "运动时长分钟", "运动强度",
+    "采用碳水", "脂肪下限", "脂肪上限", "采用脂肪", "可信度", "运动项目", "运动时长分钟", "运动强度",
     "是否额外运动", "备注",
 ]
 
@@ -192,6 +192,61 @@ class WeightForecastTests(unittest.TestCase):
         self.assertIn("HTML、CSS 或 JS", text)
         self.assertNotIn("进度条固定 10 格", text)
         self.assertNotIn("data-dynamic-ui-widget", text)
+
+    def test_legacy_csv_migration_is_idempotent_and_preserves_cells(self):
+        module = load_module()
+        legacy_row = [
+            "2026-08-01", "午餐", "米饭", "200克", "220", "260", "240",
+            "4", "6", "5", "48", "56", "52", "中", "", "", "", "否", "原备注",
+        ]
+        with self.csv_path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.writer(handle)
+            writer.writerow(module.LEGACY_HEADERS)
+            writer.writerow(legacy_row)
+
+        first = module.migrate_csv(self.csv_path)
+        second = module.migrate_csv(self.csv_path)
+        with self.csv_path.open("r", encoding="utf-8", newline="") as handle:
+            records = list(csv.reader(handle))
+
+        self.assertEqual(first["changed"], True)
+        self.assertEqual(first["legacy_cells_preserved"], True)
+        self.assertEqual(second["changed"], False)
+        self.assertEqual(records[0], module.EXPECTED_HEADERS)
+        self.assertEqual(records[1][13:16], ["", "", ""])
+        self.assertEqual(records[1][:13] + records[1][16:], legacy_row)
+
+    def test_migration_dry_run_does_not_write(self):
+        module = load_module()
+        with self.csv_path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.writer(handle)
+            writer.writerow(module.LEGACY_HEADERS)
+        before = self.csv_path.read_bytes()
+
+        result = module.migrate_csv(self.csv_path, dry_run=True)
+
+        self.assertEqual(result["changed"], True)
+        self.assertEqual(result["dry_run"], True)
+        self.assertEqual(self.csv_path.read_bytes(), before)
+
+    def test_migration_backups_from_different_ledgers_do_not_collide(self):
+        module = load_module()
+        other_path = self.root / "另一份饮食记录.csv"
+        for path, food in ((self.csv_path, "米饭"), (other_path, "鸡蛋")):
+            with path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.writer(handle)
+                writer.writerow(module.LEGACY_HEADERS)
+                writer.writerow([
+                    "2026-08-01", "午餐", food, "100克", "100", "120", "110",
+                    "4", "6", "5", "20", "24", "22", "中", "", "", "", "否", "",
+                ])
+
+        first = module.migrate_csv(self.csv_path)
+        second = module.migrate_csv(other_path)
+
+        self.assertNotEqual(first["backup"], second["backup"])
+        self.assertIn("米饭", Path(first["backup"]).read_text(encoding="utf-8"))
+        self.assertIn("鸡蛋", Path(second["backup"]).read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

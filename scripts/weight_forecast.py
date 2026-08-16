@@ -3,8 +3,12 @@
 
 import argparse
 import csv
+import hashlib
 import json
+import os
 import re
+import shutil
+import tempfile
 from collections import defaultdict
 from datetime import date, timedelta
 from pathlib import Path
@@ -17,11 +21,14 @@ FFM_DENSITY = 1800.0
 FORBES_CONSTANT = 10.4
 BODY_FAT_SEE = 4.1
 TDEE_WEIGHT_SLOPE = 23.9
-EXPECTED_HEADERS = [
+LEGACY_HEADERS = [
     "日期", "餐次", "食物", "估算份量", "热量下限", "热量上限", "采用热量",
     "蛋白质下限", "蛋白质上限", "采用蛋白质", "碳水下限", "碳水上限",
     "采用碳水", "可信度", "运动项目", "运动时长分钟", "运动强度",
     "是否额外运动", "备注",
+]
+EXPECTED_HEADERS = [
+    *LEGACY_HEADERS[:13], "脂肪下限", "脂肪上限", "采用脂肪", *LEGACY_HEADERS[13:],
 ]
 
 
@@ -50,11 +57,70 @@ def bullet_value(block, label):
     return match.group(1).strip() if match else ""
 
 
+def migrate_csv(path, dry_run=False):
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        records = list(csv.reader(handle))
+    if not records:
+        raise ValueError("CSV 为空")
+    headers, rows = records[0], records[1:]
+    if headers == EXPECTED_HEADERS:
+        if any(len(row) != len(EXPECTED_HEADERS) for row in rows):
+            raise ValueError("22列CSV存在列错位")
+        return {"status": "ok", "changed": False, "rows": len(rows), "columns": 22}
+    if headers != LEGACY_HEADERS:
+        raise ValueError("CSV 表头既不是19列旧版，也不是22列v2.1.0")
+    for line_number, row in enumerate(rows, start=2):
+        if len(row) != len(LEGACY_HEADERS):
+            raise ValueError(f"CSV 第 {line_number} 行有 {len(row)} 列，应为19列")
+
+    migrated = [row[:13] + ["", "", ""] + row[13:] for row in rows]
+    if any(old != new[:13] + new[16:] for old, new in zip(rows, migrated)):
+        raise ValueError("迁移校验失败：旧19列值发生变化")
+    result = {
+        "status": "ok",
+        "changed": True,
+        "dry_run": dry_run,
+        "rows": len(rows),
+        "from_columns": 19,
+        "to_columns": 22,
+        "legacy_cells_preserved": True,
+    }
+    if dry_run:
+        return result
+
+    backup_dir = Path(tempfile.gettempdir()) / "diet-fat-loss-tracker" / "migrations"
+    backup_dir.mkdir(parents=True, exist_ok=True)
+    path_key = hashlib.sha256(str(path.resolve()).encode("utf-8")).hexdigest()[:12]
+    backup_path = backup_dir / f"diet-csv-before-v2.1.0-{path_key}.csv"
+    shutil.copy2(path, backup_path)
+    temporary_name = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            "w", encoding="utf-8", newline="", dir=path.parent, delete=False,
+            prefix=f".{path.name}.", suffix=".tmp",
+        ) as handle:
+            temporary_name = handle.name
+            writer = csv.writer(handle, lineterminator="\n")
+            writer.writerow(EXPECTED_HEADERS)
+            writer.writerows(migrated)
+        os.replace(temporary_name, path)
+        temporary_name = None
+    finally:
+        if temporary_name:
+            Path(temporary_name).unlink(missing_ok=True)
+
+    verified = read_rows(path)
+    if len(verified) != len(rows):
+        raise ValueError("迁移回读失败：行数变化")
+    result["backup"] = str(backup_path)
+    return result
+
+
 def read_rows(path):
     with path.open("r", encoding="utf-8", newline="") as handle:
         reader = csv.DictReader(handle)
         if reader.fieldnames != EXPECTED_HEADERS:
-            raise ValueError("CSV 表头与 V2/V3/V4 约定不一致")
+            raise ValueError("CSV 表头与v2.1.0的22列约定不一致；请先运行 migrate")
         rows = []
         for line_number, row in enumerate(reader, start=2):
             if None in row:
@@ -311,25 +377,31 @@ def monthly_evaluation(profile, rows, month_text):
 def parse_args():
     project_root = Path(__file__).resolve().parents[2]
     parser = argparse.ArgumentParser(description="输出单日条件性体重变化或月度预测校准 JSON。")
-    parser.add_argument("mode", choices=("daily", "month"))
-    parser.add_argument("value", help="daily 用 YYYY-MM-DD；month 用 YYYY-MM")
+    parser.add_argument("mode", choices=("daily", "month", "migrate"))
+    parser.add_argument("value", nargs="?", help="daily 用 YYYY-MM-DD；month 用 YYYY-MM；migrate 不需要")
     parser.add_argument("--csv", dest="csv_path", type=Path, default=project_root / "饮食记录.csv")
     parser.add_argument("--profile", type=Path, default=project_root / "减脂档案.md")
+    parser.add_argument("--dry-run", action="store_true", help="migrate 只检查，不写入")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
     try:
-        profile = parse_profile(args.profile)
-        rows = read_rows(args.csv_path)
-        if args.mode == "daily":
-            date.fromisoformat(args.value)
-            result = daily_forecast(profile, rows, args.value)
+        if args.mode == "migrate":
+            result = migrate_csv(args.csv_path, dry_run=args.dry_run)
         else:
-            if not re.fullmatch(r"\d{4}-\d{2}", args.value):
-                raise ValueError("月份格式应为 YYYY-MM")
-            result = monthly_evaluation(profile, rows, args.value)
+            if not args.value:
+                raise ValueError("daily或month缺少日期参数")
+            profile = parse_profile(args.profile)
+            rows = read_rows(args.csv_path)
+            if args.mode == "daily":
+                date.fromisoformat(args.value)
+                result = daily_forecast(profile, rows, args.value)
+            else:
+                if not re.fullmatch(r"\d{4}-\d{2}", args.value):
+                    raise ValueError("月份格式应为 YYYY-MM")
+                result = monthly_evaluation(profile, rows, args.value)
     except (OSError, ValueError) as exc:
         result = {"status": "error", "reason": str(exc)}
     print(json.dumps(result, ensure_ascii=False, separators=(",", ":")))
