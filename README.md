@@ -2,7 +2,7 @@
 
 一个面向普通成年人的中文减脂与训练组合 Skill。它保留原有餐食估算、每日摄入进度、体重趋势和 HTML 周/月报，同时新增力量/有氧落账、解剖化训练部位图、恢复复查窗口、滚动训练计划和月度联合复核。
 
-当前正式版本：`v2.2.0`。
+当前正式版本：`v2.2.1`。
 
 ## 主要能力
 
@@ -11,7 +11,7 @@
 - 从餐食照片、可选文字或本地食物库估算份量、热量、蛋白质、碳水和脂肪，保留区间、采用值和可信度。
 - 每种食物一行写入 CSV，回读成功后才确认“已写入”。
 - 普通记录只展示本餐四项采用值、热量/蛋白质/碳水今日进度、一个建议和写入状态；详细食物表、误差分析和体重预测仅在用户主动分析或日总结时展开。
-- 今日进度以 40 格表示 100%；超过目标时按同一刻度追加可区分的超额段，并明确标注实际百分比，超过 150% 时截断显示。
+- 今日进度由确定性脚本生成：固定 40 格表示 100%，同时显示当前值、目标值和空余部分；超过目标时用另一符号按同一刻度追加超额段，超过 150% 时截断显示。
 - 脂肪只作为餐食估算和账本数据，不建立每日/月度脂肪目标、进度条或报告图表。
 - 从同一份账本生成自包含、移动端友好的周报和月报 HTML。
 - 月度体重数据充分时比较预测与实测，保守校准后续维持热量估算。
@@ -47,12 +47,14 @@ diet-fat-loss-tracker/
 ├── scripts/
 │   ├── generate_report.py
 │   ├── food_lookup.py
+│   ├── progress_bar.py
 │   ├── target_planner.py
 │   ├── training_tracker.py
 │   └── weight_forecast.py
 └── tests/
     ├── test_food_lookup.py
     ├── test_generate_report.py
+    ├── test_progress_bar.py
     ├── test_target_planner.py
     ├── test_training_tracker.py
     └── test_weight_forecast.py
@@ -111,6 +113,7 @@ Codex 的个人 Skill 可放在：
 ```bash
 python3 diet-fat-loss-tracker/scripts/target_planner.py --help
 python3 diet-fat-loss-tracker/scripts/food_lookup.py lookup 白饭
+python3 diet-fat-loss-tracker/scripts/progress_bar.py --items-json '[{"label":"热量","current":400,"target":2000,"unit":"kcal"}]'
 python3 diet-fat-loss-tracker/scripts/weight_forecast.py migrate --csv 饮食记录.csv --dry-run
 python3 diet-fat-loss-tracker/scripts/weight_forecast.py daily 2026-08-06
 python3 diet-fat-loss-tracker/scripts/weight_forecast.py month 2026-08
@@ -172,7 +175,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s diet-fat-loss-track
 python3 /path/to/skill-creator/scripts/quick_validate.py diet-fat-loss-tracker
 ```
 
-当前 `v2.2.0` 共 40 项测试，覆盖原有饮食、预测、HTML 报告和训练合同，并覆盖普通餐食进度条、四公式目标规划、期限可行性、食物库许可与唯一匹配、19→22 列无损迁移及幂等性，以及脂肪不扩张到每日/月度目标和报告。
+当前 `v2.2.1` 共 47 项测试，覆盖原有饮食、预测、HTML 报告和训练合同，并覆盖固定满量程与超额进度条、99%/101% 临界值、四公式目标规划、期限可行性、食物库许可与唯一匹配、19→22 列无损迁移及幂等性，以及脂肪不扩张到每日/月度目标和报告。
 
 ## 许可证
 
